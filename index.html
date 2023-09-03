@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <p>When client request resource from server, the response is of two type</p>
+    <p>Either new page is loaded or part of the page is refreshed</p>
+    <p>Request is of two type GET and POST</p>
+    <div class="container">
+        <h3>GET request with no parameters</h3>
+        <form action="./showRecords.php" method="get">
+            <h4>Show All records</h4>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div  class="container">       
+        <h3>GET request with parameters</h3>
+        <form action="./showRecord.php" method="get">
+            <h4>Show single record</h4>
+            <input type="text" name="id" value = "" required>
+            <input type="submit" value="Submit">
+        </form> 
+    </div>
+
+    <div class="container">       
+        <h3>POST request with parameters</h3>
+        <form action="./showRecord.php" method="POST">
+            <h4>Show single record</h4>
+            <input type="text" name="id" value = "" required>
+            <input type="submit" value="Submit">
+        </form>         
+    </div>
+ 
+    <div class="container">       
+        <h3>POST request. Upload image</h3>
+        <form action="./showImage.php" method="POST" enctype="multipart/form-data">
+            <label for="name">Image Name: </label>
+            <input type="text" name="name" id="name" value = "" required>
+            <label for="fruit">Select Image: </label>
+            <input type="file" name="fruit" id="fruit" required>
+            <input type="submit" value="Submit">
+        </form>         
+    </div>  
+    
+    <div class="container">
+        <h3>AJAX GET request with no parameters</h3>
+        <h4>Display All records</h4>
+        <input type="button" value="Display" id="records-btn">    
+        <input type="button" value="Clear" id="records-clr-btn"> 
+
+        <table id="records-table">
+        </table>
+    </div>  
+    
+    <div class="container">
+        <h3>AJAX request with parameter</h3>
+        <h4>Display Single records</h4>
+        <div>
+            <input type="text" name="city-name" id="city-name" required>
+            <select name="requestMethod" id="requestMethod">
+                <option value="1">GET</option>
+                <option value="2">POST</option>
+                <option value="3">API</option>
+            </select>
+        </div>
+        <div>
+            <input type="button" value="Display" id="record-btn">    
+            <input type="button" value="Clear" id="record-clr-btn"> 
+        </div>
+        <div id="city-detail">
+        </div>
+    </div> 
+
+    <div class="container">
+        <h3>AJAX request to upload image</h3>
+        <form action="" method="post" id="imageform" enctype="multipart/form-data">
+            <div>
+                <label for="ajaximg">Open image to upload</label>
+                <input type="file" name="ajaximg" id="ajaximg">
+            </div>
+            <div>
+                <input type="submit" value="Upload" id="upload-btn">    
+                <input type="button" value="Clear" id="upload-clr-btn"> 
+            </div>
+        </form>
+        <div id="image-div">
+        </div>
+    </div>     
+
+</body>
+<script src="xhrGetRecords.js"></script>
+<script src="xhrGetRecord.js"></script>
+<!-- <script src="xhrGetRecordAPI.js"></script> -->
+
+<script>  
+
+    //function renders ajax response data
+    function renderImage(response){
+        debugger
+        //convert ajax response into array of objects
+        let record = JSON.parse(response)
+
+        //create pointer record-table element
+        const cityDetailEl = document.getElementById('image-div')         
+
+        //insert string into table
+        cityDetailEl.innerHTML = `<img src="${record.image}" alt="img.jpg">`
+
+    }
+
+    //create pointer to upload-btn element
+    const uploadBtnEl = document.getElementById('upload-btn')
+
+    //create pointer to upload-clr-btn element
+    const uploadClrBtnEl = document.getElementById('upload-clr-btn')    
+    
+    //create pointer to image form element
+    const imgFormEl = document.getElementById('imageform')  
+    
+ 
+
+    //add event listner to img-form element
+    imgFormEl.addEventListener('submit',function(e){
+
+        debugger;
+        e.preventDefault()
+
+        //create pointer to image file
+       var ajaximg = document.getElementById('ajaximg')
+
+        //Retrive image file
+       var file = ajaximg.files[0]
+
+       //create form data
+       var fdata = new FormData()
+
+       //append image file
+       fdata.append('image',file)
+
+       //specify request url
+       url = `./uploadImage.php`
+
+       //specify request method
+       method = 'POST'
+
+        try {          
+
+            //create ajax request object
+            const xhr = new XMLHttpRequest()
+
+            //specify callback function for onload event
+            xhr.onload = function(){
+                if(this.status === 200){
+                    renderImage(xhr.response)
+                }
+            }
+
+            //specify callback function for error event
+            xhr.onerror = function(error){
+                   console.log(`Error: ${error}`) 
+            }  
+
+            //create connection with server
+            xhr.open(method,url,true)
+
+            //set request headers
+            xhr.setRequestHeader('Accept','application/json')
+            // xhr.setRequestHeader('Content-Type','multipart/form-data')
+
+            //send ajax request
+            xhr.send(fdata)
+        
+        } catch (error) {
+            console.log(`Error: ${error}`)                
+        }
+
+    })
+
+    //add event listner to records-btn element
+    uploadClrBtnEl.addEventListener('click',function(e){
+
+        e.preventDefault()
+
+        //create pointer record-table element
+        const imageDivEl = document.getElementById('image-div')               
+        imageDivEl.innerHTML = ""
+    })        
+  
+</script>
+</html>

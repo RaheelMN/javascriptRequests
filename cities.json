@@ -1,0 +1,22 @@
+[
+
+        {   "id":1,
+            "ct_name":"hydrabad"
+        },
+        {   "id":2,
+            "ct_name":"swat"
+        },
+        {
+            "id":3,
+            "ct_name":"wah cantt"
+        },            
+        {
+            "id":4,
+            "ct_name":"attock"
+        },           
+        {
+            "id":5,
+            "ct_name":"chitral"
+        }
+
+]
